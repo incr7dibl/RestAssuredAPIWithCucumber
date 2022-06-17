@@ -28,4 +28,9 @@ public class TestDataBuilder {
 		return place;
 
 	}
+
+	public String getDeletePlacePayload(String place_ID) {
+		// TODO Auto-generated method stub
+		return "{\r\n" + "    \"place_id\":\"" + place_ID + "\"\r\n" + "}\r\n" + "";
+	}
 }

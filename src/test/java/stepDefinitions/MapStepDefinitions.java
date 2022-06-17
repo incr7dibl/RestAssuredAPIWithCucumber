@@ -23,17 +23,13 @@ public class MapStepDefinitions extends Utils {
 	TestDataBuilder builder = new TestDataBuilder();
 	Response response;
 	RequestSpecification res;
+	static String place_id;
 
 	@Given("Add place payload with {},{},{}")
 	public void add_place_payload_with_harsh_english_kolhapur(String name, String langauge, String address)
 			throws IOException {
 		res = given().spec(getReqSpec()).body(builder.getPlace(name, langauge, address));
 	}
-
-//	@Given("Add place payload")
-//	public void add_place_payload() throws IOException {
-//		
-//	}
 
 	@When("user call {string} with post http request")
 	public void user_call_with_post_http_request(String resource) {
@@ -57,7 +53,7 @@ public class MapStepDefinitions extends Utils {
 	@Then("verify place_Id is created maps to {} using {string}")
 	public void verify_place_id_is_created_maps_to_harsh_using(String expectedName, String resource)
 			throws IOException {
-		String place_id = getResponseValue(response, "place_id");
+		place_id = getResponseValue(response, "place_id");
 		res = given().spec(getReqSpec()).queryParam("place_id", place_id);
 
 		APIResourceEnum resourceName = APIResourceEnum.valueOf(resource);
@@ -68,6 +64,20 @@ public class MapStepDefinitions extends Utils {
 		String actualName = getResponseValue(response, "name");
 
 		assertEquals(expectedName, actualName);
+	}
+
+	@Given("DeleteplaceAPI payload")
+	public void deleteplace_api_payload() throws IOException {
+		// Write code here that turns the phrase above into concrete actions
+		res = given().spec(getReqSpec()).body(builder.getDeletePlacePayload(place_id));
+	}
+
+	@When("User {string} with place_ID")
+	public void user_with_place_id(String string) {
+		// Write code here that turns the phrase above into concrete actions
+		APIResourceEnum resourceName = APIResourceEnum.valueOf(string);
+		resSpec = new ResponseSpecBuilder().expectStatusCode(200).expectContentType(ContentType.JSON).build();
+		response = res.when().post(resourceName.getResource()).then().spec(resSpec).extract().response();
 	}
 
 }
